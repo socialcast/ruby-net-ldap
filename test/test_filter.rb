@@ -23,6 +23,10 @@ class TestFilter < Test::Unit::TestCase
   def test_to_s
     assert_equal("(uid=george *)", Filter.eq("uid", "george *").to_s)
   end
+  
+  def test_apostrophe
+    assert_equal("(uid=O'Keefe)", Filter.construct("uid=O'Keefe").to_rfc2254)
+  end
 
 	def test_c2
     assert_equal("(uid=george *)",
