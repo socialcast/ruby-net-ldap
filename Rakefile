@@ -13,6 +13,24 @@ PKG_TAR     = "pkg/#{PKG_DIST}.tar.gz"
 MANIFEST    = File.read("Manifest.txt").split
 MINRUBY     = "1.8.7"
 
+begin
+  require 'jeweler'
+  Jeweler::Tasks.new do |gemspec|
+    gemspec.name = "scashin133-#{PKG_NAME}"
+    gemspec.summary = "Pure Ruby LDAP support library with most client features and some server features."
+    gemspec.description = "Pure Ruby LDAP library."
+    gemspec.email = "scashin133@gmail.com"
+    gemspec.homepage = "http://github.com/scashin133/ruby-net-ldap"
+    gemspec.authors = ["Francis Cianfrocca", "Emiel van de Laar", "Rory O'Connell", "Kaspar Schiess", "Austin Ziegler", "Sean Cashin"]
+    gemspec.add_development_dependency "archive-tar-minitar", "~>0.5.1"
+    gemspec.add_development_dependency "hanna", "~>0.1.2"
+    gemspec.add_development_dependency "hoe-git", "~>1"
+    gemspec.add_development_dependency "metaid", "~>1"
+  end
+rescue LoadError
+  puts "Jeweler not available. Install it with: sudo gem install jeweler"
+end
+
 Hoe.plugin :git
 Hoe.spec PKG_NAME do
   self.version = PKG_VERSION
