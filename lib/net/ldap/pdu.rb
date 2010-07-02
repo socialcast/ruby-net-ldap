@@ -196,7 +196,7 @@ class Net::LDAP::PDU
   # be a good idea. Maybe this should be configurable.
   def parse_search_return(sequence)
     sequence.length >= 2 or raise Net::LDAP::PDU::Error, "Invalid Search Response length."
-    @search_entry = LDAP::Entry.new(sequence[0])
+    @search_entry = Net::LDAP::Entry.new(sequence[0])
     sequence[1].each { |seq| @search_entry[seq[0]] = seq[1] }
   end
   private :parse_search_return
