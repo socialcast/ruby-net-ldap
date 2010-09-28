@@ -532,7 +532,7 @@ class Net::LDAP
     else
       os.code = 0
     end
-    os.message = LDAP.result2string(os.code)
+    os.message = Net::LDAP.result2string(os.code)
     os
   end
 
@@ -1170,12 +1170,12 @@ class Net::LDAP::Connection #:nodoc:
       # go here.
     when :start_tls
       msgid = next_msgid.to_ber
-      request = [StartTlsOid.to_ber].to_ber_appsequence(Net::LdapPdu::ExtendedRequest)
+      request = [Net::LDAP::StartTlsOid.to_ber].to_ber_appsequence(Net::LDAP::PDU::ExtendedRequest)
       request_pkt = [msgid, request].to_ber_sequence
       @conn.write request_pkt
       be = @conn.read_ber(Net::LDAP::AsnSyntax)
       raise Net::LDAP::LdapError, "no start_tls result" if be.nil?
-      pdu = Net::LdapPdu.new(be)
+      pdu = Net::LDAP::PDU.new(be)
       raise Net::LDAP::LdapError, "no start_tls result" if pdu.nil?
       if pdu.result_code.zero?
         @conn = self.class.wrap_with_ssl(@conn)
@@ -1234,7 +1234,7 @@ class Net::LDAP::Connection #:nodoc:
     request_pkt = [msgid, request].to_ber_sequence
     @conn.write request_pkt
 
-    (be = @conn.read_ber(Net::LDAP::AsnSyntax) and pdu = Net::LdapPdu.new(be)) or raise Net::LDAP::LdapError, "no bind result"
+    (be = @conn.read_ber(Net::LDAP::AsnSyntax) and pdu = Net::LDAP::PDU.new(be)) or raise Net::LDAP::LdapError, "no bind result"
 
     pdu.result_code
   end
@@ -1273,7 +1273,7 @@ class Net::LDAP::Connection #:nodoc:
       request_pkt = [msgid, request].to_ber_sequence
       @conn.write request_pkt
 
-      (be = @conn.read_ber(Net::LDAP::AsnSyntax) and pdu = Net::LdapPdu.new(be)) or raise Net::LDAP::LdapError, "no bind result"
+      (be = @conn.read_ber(Net::LDAP::AsnSyntax) and pdu = Net::LDAP::PDU.new(be)) or raise Net::LDAP::LdapError, "no bind result"
       return pdu.result_code unless pdu.result_code == 14 # saslBindInProgress
       raise Net::LDAP::LdapError, "sasl-challenge overflow" if ((n += 1) > MaxSaslChallenges)
 
@@ -1401,7 +1401,7 @@ class Net::LDAP::Connection #:nodoc:
       result_code = 0
       controls = []
 
-      while (be = @conn.read_ber(Net::LDAP::AsnSyntax)) && (pdu = Net::LdapPdu.new(be))
+      while (be = @conn.read_ber(Net::LDAP::AsnSyntax)) && (pdu = Net::LDAP::PDU.new(be))
         case pdu.app_tag
         when 4 # search-data
           n_results += 1
@@ -1478,7 +1478,7 @@ class Net::LDAP::Connection #:nodoc:
     pkt = [next_msgid.to_ber, request].to_ber_sequence
     @conn.write pkt
 
-    (be = @conn.read_ber(Net::LDAP::AsnSyntax)) && (pdu = Net::LdapPdu.new(be)) && (pdu.app_tag == 7) or raise Net::LDAP::LdapError, "response missing or invalid"
+    (be = @conn.read_ber(Net::LDAP::AsnSyntax)) && (pdu = Net::LDAP::PDU.new(be)) && (pdu.app_tag == 7) or raise Net::LDAP::LdapError, "response missing or invalid"
     pdu.result_code
   end
 
@@ -1500,23 +1500,26 @@ class Net::LDAP::Connection #:nodoc:
     pkt = [next_msgid.to_ber, request].to_ber_sequence
     @conn.write pkt
 
-    (be = @conn.read_ber(Net::LDAP::AsnSyntax)) && (pdu = Net::LdapPdu.new(be)) && (pdu.app_tag == 9) or raise Net::LDAP::LdapError, "response missing or invalid"
+    (be = @conn.read_ber(Net::LDAP::AsnSyntax)) && (pdu = Net::LDAP::PDU.new(be)) && (pdu.app_tag == 9) or raise Net::LDAP::LdapError, "response missing or invalid"
     pdu.result_code
   end
 
   #--
   # TODO: need to support a time limit, in case the server fails to respond.
   #++
-  def rename(args)
+  def rename args
     old_dn = args[:olddn] or raise "Unable to rename empty DN"
     new_rdn = args[:newrdn] or raise "Unable to rename to empty RDN"
     delete_attrs = args[:delete_attributes] ? true : false
+		new_superior = args[:new_superior]
 
-    request = [old_dn.to_ber, new_rdn.to_ber, delete_attrs.to_ber].to_ber_appsequence(12)
-    pkt = [next_msgid.to_ber, request].to_ber_sequence
+		request = [old_dn.to_ber, new_rdn.to_ber, delete_attrs.to_ber]
+		request << new_superior.to_ber unless new_superior == nil
+  	
+    pkt = [next_msgid.to_ber, request.to_ber_appsequence(12)].to_ber_sequence
     @conn.write pkt
 
-    (be = @conn.read_ber(Net::LDAP::AsnSyntax)) && (pdu = Net::LdapPdu.new(be)) && (pdu.app_tag == 13) or raise Net::LDAP::LdapError, "response missing or invalid"
+    (be = @conn.read_ber(AsnSyntax)) && (pdu = LdapPdu.new( be )) && (pdu.app_tag == 13) or raise LdapError.new( "response missing or invalid" )
     pdu.result_code
   end
 
@@ -1530,7 +1533,7 @@ class Net::LDAP::Connection #:nodoc:
     pkt = [next_msgid.to_ber, request].to_ber_sequence
     @conn.write pkt
 
-    (be = @conn.read_ber(Net::LDAP::AsnSyntax)) && (pdu = Net::LdapPdu.new(be)) && (pdu.app_tag == 11) or raise Net::LDAP::LdapError, "response missing or invalid"
+    (be = @conn.read_ber(Net::LDAP::AsnSyntax)) && (pdu = Net::LDAP::PDU.new(be)) && (pdu.app_tag == 11) or raise Net::LDAP::LdapError, "response missing or invalid"
     pdu.result_code
   end
 end # class Connection

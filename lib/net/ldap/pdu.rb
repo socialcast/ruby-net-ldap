@@ -270,6 +270,7 @@ module Net
     when "LdapPduError"
       warn "Net::#{name} has been deprecated. Use Net::LDAP::PDU::Error instead."
       Net::LDAP::PDU::Error
+    when 'LDAP'
     else
       super
     end
