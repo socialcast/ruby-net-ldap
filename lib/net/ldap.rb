@@ -246,7 +246,7 @@ require 'net/ldap/entry'
 # and then keeps it open while it executes a user-supplied block.
 # Net::LDAP#open closes the connection on completion of the block.
 class Net::LDAP
-  VERSION = "0.1.1"
+  VERSION = "0.1.2"
 
   class LdapError < StandardError; end
 
