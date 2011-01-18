@@ -1,4 +1,7 @@
+.bundle/config
 COPYING
+Gemfile
+Gemfile.lock
 Hacking.rdoc
 History.txt
 LICENSE

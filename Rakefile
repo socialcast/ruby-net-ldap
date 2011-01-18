@@ -6,7 +6,7 @@ $LOAD_PATH.unshift('lib')
 
 require 'net/ldap'
 
-PKG_NAME    = 'net-ldap'
+PKG_NAME    = 'scashin133-net-ldap'
 PKG_VERSION = Net::LDAP::VERSION
 PKG_DIST    = "#{PKG_NAME}-#{PKG_VERSION}"
 PKG_TAR     = "pkg/#{PKG_DIST}.tar.gz"
