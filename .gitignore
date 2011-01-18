@@ -10,3 +10,4 @@ publish/
 coverage/
 coverage.info
 .rake_tasks~
+.bundle

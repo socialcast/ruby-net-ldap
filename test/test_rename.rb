@@ -1,6 +1,9 @@
 require 'common'
 
 class TestRename < Test::Unit::TestCase
+  def test_the_truth
+    assert true
+  end
   # Commented out since it assumes you have a live LDAP server somewhere. This
   # will be migrated to the integration specs, as soon as they are ready. 
   
