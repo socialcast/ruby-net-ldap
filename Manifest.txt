@@ -1,4 +1,3 @@
-.bundle/config
 COPYING
 Gemfile
 Gemfile.lock
