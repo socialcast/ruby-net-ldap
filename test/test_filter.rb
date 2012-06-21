@@ -19,6 +19,12 @@ class TestFilter < Test::Unit::TestCase
       Filter.__send__(:new, :xx, nil, nil)
     }
   end
+  
+  def test_raw_utf8_encoded_on_ascii
+    assert_nothing_raised do
+      "0\r\x02\x01~\x04\b\x00\x00\x00\x00\x00\x01\x87\"".send :raw_utf8_encoded
+    end
+  end
 
   def test_to_s
     assert_equal("(uid=george *)", Filter.eq("uid", "george *").to_s)
