@@ -1,3 +1,6 @@
+# -*- ruby encoding: utf-8 -*-
+##
+# Ber extensions to the Fixnum class.
 module Net::BER::Extensions::Fixnum
   ##
   # Converts the fixnum to BER format.

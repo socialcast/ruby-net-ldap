@@ -24,7 +24,8 @@ describe Net::LDAP::Filter do
         '(o:dn:=Ace Industry)', 
         '(:dn:2.4.8.10:=Dino)', 
         '(cn:dn:1.2.3.4.5:=John Smith)', 
-        '(sn:dn:2.4.6.8.10:=Barbara Jones)', 
+        '(sn:dn:2.4.6.8.10:=Barbara Jones)',
+        '(&(sn:dn:2.4.6.8.10:=Barbara Jones))'
       ].each do |filter_str|
         context "from_rfc2254(#{filter_str.inspect})" do
           attr_reader :filter
@@ -76,8 +77,8 @@ describe Net::LDAP::Filter do
     end
   end
   describe "<- .escape(str)" do
-    it "should escape !, &, *, :, | and ~" do
-      Net::LDAP::Filter.escape('!&*:|~').should == "\\21\\26\\2A\\3A\\7C\\7E"
+    it "should escape nul, *, (, ) and \\" do
+      Net::LDAP::Filter.escape("\0*()\\").should == "\\00\\2A\\28\\29\\5C"
     end 
   end
 end

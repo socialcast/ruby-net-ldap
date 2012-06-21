@@ -1,29 +1,71 @@
-=== Net::LDAP NEXT / 2010-__-__
-* SSL capabilities will be enabled or disabled based on whether we can load
-  OpenSSL successfully or not.
-* Moved the core class extensions extensions from being in the Net::LDAP
-  hierarchy to the Net::BER hierarchy as most of the methods therein are
-  related to BER-encoding values. This will make extracting Net::BER from
-  Net::LDAP easier in the future.
-* Net::LDAP::Filter changes:
-  * Filters can only be constructed using our custom constructors (eq, ge,
-    etc.). Cleaned up the code to reflect the private new.
-  * Fixed #to_ber to output a BER representation for :ne filters. Simplified
-  * the BER construction for substring matching.
-  * Added Filter.join(left, right), Filter.intersect(left, right), and
-    Filter.negate(filter) to match Filter#&, Filter#|, and Filter#~@ to prevent
-    those operators from having problems with the private new.
-  * Added Filter.present and Filter.present? aliases for the method previously
-    only known as Filter.pres.
-  * Cleaned up Net::LDAP::Filter::FilterParser to handle branches better. Fixed
-    some of the regular expressions to be more canonically defined.
-  * Cleaned up the string representation of Filter objects.
-  * Added experimental support for RFC4515 extensible matching (e.g.,
-    "(cn:caseExactMatch:=Fred Flintstone)"); provided by "nowhereman".
-* Added or revised documentation:
+=== Net::LDAP 0.3.1 / 2012-02-15
+* Bug Fixes:
+  * Bundler should now work again
+
+=== Net::LDAP 0.3.0 / 2012-02-14
+* Major changes:
+  * Now uses UTF-8 strings instead of ASCII-8 per the LDAP RFC
+* Major Enhancements:
+  * Adding continuation reference processing
+* Bug Fixes:
+  * Fixes usupported object type #139
+  * Fixes Net::LDAP namespace errors
+  * Return nil instead of an empty array if the search fails
+
+=== Net::LDAP 0.2.2 / 2011-03-26
+* Bug Fixes:
+  * Fixed the call to Net::LDAP.modify_ops from Net::LDAP#modify.
+
+=== Net::LDAP 0.2.1 / 2011-03-23
+* Bug Fixes:
+  * Net::LDAP.modify_ops was broken and is now fixed.
+
+=== Net::LDAP 0.2 / 2011-03-22
+* Major Enhancements:
+  * Net::LDAP::Filter changes:
+    * Filters can only be constructed using our custom constructors (eq, ge,
+      etc.). Cleaned up the code to reflect the private new.
+    * Fixed #to_ber to output a BER representation for :ne filters. Simplified
+      the BER construction for substring matching.
+    * Added Filter.join(left, right), Filter.intersect(left, right), and
+      Filter.negate(filter) to match Filter#&, Filter#|, and Filter#~@ to
+      prevent those operators from having problems with the private new.
+    * Added Filter.present and Filter.present? aliases for the method
+      previously only known as Filter.pres.
+    * Added Filter.escape to escape strings for use in filters, based on
+      rfc4515.
+    * Added Filter.equals, Filter.begins, Filter.ends and Filter.contains,
+      which automatically escape input for use in a filter string.
+    * Cleaned up Net::LDAP::Filter::FilterParser to handle branches better.
+      Fixed some of the regular expressions to be more canonically defined.
+    * Correctly handles single-branch branches.
+    * Cleaned up the string representation of Filter objects.
+    * Added experimental support for RFC4515 extensible matching (e.g.,
+      "(cn:caseExactMatch:=Fred Flintstone)"); provided by "nowhereman".
+  * Net::LDAP::DN class representing an automatically escaping/unescaping
+    distinguished name for LDAP queries.
+* Minor Enhancements:
+  * SSL capabilities will be enabled or disabled based on whether we can load
+    OpenSSL successfully or not.
+  * Moved the core class extensions extensions from being in the Net::LDAP
+    hierarchy to the Net::BER hierarchy as most of the methods therein are
+    related to BER-encoding values. This will make extracting Net::BER from
+    Net::LDAP easier in the future.
+  * Added some unit tests for the BER core extensions.
+  * Paging controls are only sent where they are supported.
+* Documentation Changes:
   * Core class extension methods under Net::BER.
+  * Extensive changes to Net::BER documentation.
+  * Cleaned up some rdoc oddities, suppressed empty documentation sections
+    where possible.
+  * Added a document describing how to contribute to Net::LDAP most
+    effectively.
+  * Added a document recognizing contributors to Net::LDAP.
 * Extended unit testing:
   * Added some unit tests for the BER core extensions.
+  * The LDIF test data file was split for Ruby 1.9 regexp support.
+  * Added a cruisecontrol.rb task.
+  * Converted some test/unit tests to specs.
 * Code clean-up:
   * Made the formatting of code consistent across all files.
   * Removed Net::BER::BERParser::TagClasses as it does not appear to be used.
@@ -34,11 +76,18 @@
     Pdu#result. This may be changed in Net::LDAP 1.0 to return the full
     Pdu#result, but if we do so, it will be that way for all LDAP calls
     involving Pdu objects.
+  * Renamed Net::LDAP::Psw to Net::LDAP::Password with a corresponding filename
+    change.
+  * Removed the stub file lib/net/ldif.rb and class Net::LDIF.
+* Project Management:
+  * Changed the license from Ruby + GPL to MIT with the agreement of the
+    original author (Francis Cianfrocca) and the named contributors. Versions
+    prior to 0.2.0 are still available under the Ruby + GPL license.
 
 === Net::LDAP 0.1.1 / 2010-03-18
 * Fixing a critical problem with sockets.
 
-=== Net::LDAP 0.1.0 / 2010-03-17
+=== Net::LDAP 0.1 / 2010-03-17
 * Small fixes throughout, more to come.
 * Ruby 1.9 support added.
 * Ruby 1.8.6 and below support removed. If we can figure out a compatible way

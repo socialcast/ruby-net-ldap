@@ -1,25 +1,4 @@
-# Encoding: UTF-8
-# Copyright (C) 2006 by Francis Cianfrocca and other contributors. All
-# Rights Reserved.
-#
-# Gmail: garbagecat10
-#
-# This program is free software; you can redistribute it and/or modify it
-# under the terms of the GNU General Public License as published by the Free
-# Software Foundation; either version 2 of the License, or (at your option)
-# any later version.
-#
-# This program is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-# or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
-# for more details.
-#
-# You should have received a copy of the GNU General Public License along
-# with this program; if not, write to:
-#   Free Software Foundation, Inc.
-#   51 Franklin St, Fifth Floor
-#   Boston, MA  02110-1301
-#   USA
+# -*- ruby encoding: utf-8 -*-
 
 ##
 # Class Net::LDAP::Filter is used to constrain LDAP searches. An object of
@@ -249,12 +228,11 @@ class Net::LDAP::Filter
     # string using a single backslash ('\') as escape. 
     #
     ESCAPES = {
-      '!' => '21', # EXCLAMATION    = %x21 ; exclamation mark ("!")
-      '&' => '26', # AMPERSAND      = %x26 ; ampersand (or AND symbol) ("&")
-      '*' => '2A', # ASTERISK       = %x2A ; asterisk ("*")
-      ':' => '3A', # COLON          = %x3A ; colon (":")
-      '|' => '7C', # VERTBAR        = %x7C ; vertical bar (or pipe) ("|")
-      '~' => '7E', # TILDE          = %x7E ; tilde ("~")
+      "\0" => '00', # NUL            = %x00 ; null character
+      '*'  => '2A', # ASTERISK       = %x2A ; asterisk ("*")
+      '('  => '28', # LPARENS        = %x28 ; left parenthesis ("(")
+      ')'  => '29', # RPARENS        = %x29 ; right parenthesis (")")
+      '\\' => '5C', # ESC            = %x5C ; esc (or backslash) ("\")
     }
     # Compiled character class regexp using the keys from the above hash. 
     ESCAPE_RE = Regexp.new(
@@ -533,7 +511,7 @@ class Net::LDAP::Filter
     when :ex
       seq = []
 
-      unless @left =~ /^([-;\d\w]*)(:dn)?(:(\w+|[.\d\w]+))?$/
+      unless @left =~ /^([-;\w]*)(:dn)?(:(\w+|[.\w]+))?$/
         raise Net::LDAP::LdapError, "Bad attribute #{@left}"
       end
       type, dn, rule = $1, $2, $4
@@ -716,7 +694,7 @@ class Net::LDAP::Filter
       filter = nil
       branches = parse_branches(scanner)
 
-      if branches.size >= 2
+      if branches.size >= 1
         filter = branches.shift
         while not branches.empty?
           filter = filter.__send__(op, branches.shift)
@@ -751,7 +729,7 @@ class Net::LDAP::Filter
     # This parses a given expression inside of parentheses.
     def parse_filter_branch(scanner)
       scanner.scan(/\s*/)
-      if token = scanner.scan(/[-\w\d_:.]*[\d\w]/)
+      if token = scanner.scan(/[-\w:.]*[\w]/)
         scanner.scan(/\s*/)
         if op = scanner.scan(/<=|>=|!=|:=|=/)
           scanner.scan(/\s*/)

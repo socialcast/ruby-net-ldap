@@ -1,3 +1,6 @@
+# -*- ruby encoding: utf-8 -*-
+##
+# BER extensions to the Bignum class.
 module Net::BER::Extensions::Bignum
   ##
   # Converts a Bignum to an uncompressed BER integer.
