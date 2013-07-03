@@ -1198,6 +1198,9 @@ class Net::LDAP::Connection #:nodoc:
   end
 
   def next_msgid
+    # avoids using the msgid range 128-255 by starting the msgid counter at 300
+    # otherwise certain versions and/or configurations of Microsoft's Active Directory will
+    # return Error Searching: invalid response-type in search: 24 and halt the mirroring process
     @msgid ||= 300
     @msgid += 1
   end
