@@ -1198,7 +1198,7 @@ class Net::LDAP::Connection #:nodoc:
   end
 
   def next_msgid
-    @msgid ||= 0
+    @msgid ||= 300
     @msgid += 1
   end
 
