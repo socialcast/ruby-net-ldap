@@ -246,7 +246,7 @@ require 'net/ldap/entry'
 # and then keeps it open while it executes a user-supplied block.
 # Net::LDAP#open closes the connection on completion of the block.
 class Net::LDAP
-  VERSION = "0.1.6"
+  VERSION = "0.1.7"
 
   class LdapError < StandardError; end
 
@@ -1198,7 +1198,10 @@ class Net::LDAP::Connection #:nodoc:
   end
 
   def next_msgid
-    @msgid ||= 0
+    # avoids using the msgid range 128-255 by starting the msgid counter at 300
+    # otherwise certain versions and/or configurations of Microsoft's Active Directory will
+    # return Error Searching: invalid response-type in search: 24 and halt the mirroring process
+    @msgid ||= 300
     @msgid += 1
   end
 
