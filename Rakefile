@@ -22,7 +22,7 @@ Hoe.spec PKG_NAME do
   developer "Emiel van de Laar", "gemiel@gmail.com"
   developer "Rory O'Connell", "rory.ocon@gmail.com"
   developer "Kaspar Schiess", "kaspar.schiess@absurd.li"
-  developer "Austin Ziegler", "austin@rubyforge.org" 
+  developer "Austin Ziegler", "austin@rubyforge.org"
 
   self.remote_rdoc_dir = ''
   rsync_args << ' --exclude=statsvn/'
@@ -120,5 +120,5 @@ task :build_manifest do |t|
   puts paths.sort.join("\n")
 end
 
-desc "Run a full set of integration and unit tests" 
+desc "Run a full set of integration and unit tests"
 task :cruise => [:test, :spec]
