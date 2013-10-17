@@ -25,7 +25,6 @@ lib/net/ldap/password.rb
 lib/net/ldap/pdu.rb
 lib/net/ldif.rb
 lib/net/snmp.rb
-spec/integration/ssl_ber_spec.rb
 spec/spec.opts
 spec/spec_helper.rb
 spec/unit/ber/ber_spec.rb
