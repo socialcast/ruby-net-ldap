@@ -1124,7 +1124,7 @@ class Net::LDAP::Connection #:nodoc:
     end
   end
 
-  def self.wrap_with_ssl(io, options={})
+  def self.wrap_with_ssl(io, options = {})
     raise Net::LDAP::LdapError, "OpenSSL is unavailable" unless Net::LDAP::HasOpenSSL
     ctx = OpenSSL::SSL::SSLContext.new
     ctx.ssl_version = options[:ssl_version] if options.has_key?(:ssl_version)
