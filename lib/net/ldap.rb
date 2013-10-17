@@ -1124,9 +1124,10 @@ class Net::LDAP::Connection #:nodoc:
     end
   end
 
-  def self.wrap_with_ssl(io)
+  def self.wrap_with_ssl(io, options = {})
     raise Net::LDAP::LdapError, "OpenSSL is unavailable" unless Net::LDAP::HasOpenSSL
     ctx = OpenSSL::SSL::SSLContext.new
+    ctx.ssl_version = options[:ssl_version] if options.has_key?(:ssl_version)
     conn = OpenSSL::SSL::SSLSocket.new(io, ctx)
     conn.connect
     conn.sync_close = true
@@ -1165,7 +1166,7 @@ class Net::LDAP::Connection #:nodoc:
   def setup_encryption(args)
     case args[:method]
     when :simple_tls
-      @conn = self.class.wrap_with_ssl(@conn)
+      @conn = self.class.wrap_with_ssl(@conn, args)
       # additional branches requiring server validation and peer certs, etc.
       # go here.
     when :start_tls
@@ -1178,7 +1179,7 @@ class Net::LDAP::Connection #:nodoc:
       pdu = Net::LDAP::PDU.new(be)
       raise Net::LDAP::LdapError, "no start_tls result" if pdu.nil?
       if pdu.result_code.zero?
-        @conn = self.class.wrap_with_ssl(@conn)
+        @conn = self.class.wrap_with_ssl(@conn, args)
       else
         raise Net::LDAP::LdapError, "start_tls failed: #{pdu.result_code}"
       end
@@ -1328,7 +1329,7 @@ class Net::LDAP::Connection #:nodoc:
   # in the protocol.
   #++
   def search(args = {})
-    search_filter = (args && args[:filter]) || 
+    search_filter = (args && args[:filter]) ||
       Net::LDAP::Filter.eq("objectclass", "*")
     search_filter = Net::LDAP::Filter.construct(search_filter) if search_filter.is_a?(String)
     search_base = (args && args[:base]) || "dc=example, dc=com"
@@ -1518,7 +1519,7 @@ class Net::LDAP::Connection #:nodoc:
 
 		request = [old_dn.to_ber, new_rdn.to_ber, delete_attrs.to_ber]
 		request << new_superior.to_ber unless new_superior == nil
-  	
+
     pkt = [next_msgid.to_ber, request.to_ber_appsequence(12)].to_ber_sequence
     @conn.write pkt
 
